@@ -4,7 +4,7 @@ const sequelize = require("./app/model/dbconfig");
 const Book = require("./app/model/book");
 
 // automatically creating table on startup
-sequelize.sync({ force: true }).then(async () => {
+sequelize.sync({ force: false }).then(async () => {
   console.log("db is ready...");
 });
 
@@ -52,7 +52,7 @@ app.post("/submit", async (req, res) => {
 app.delete("/delete/:id", async (req, res) => {
   const id = req.params.id;
   await Book.findOne({ where: { id: id } }).then((book) => {
-    book.destroy();
+    book && book.destroy();
     return res.send("");
   });
 });
@@ -124,28 +124,6 @@ app.put("/update/:id", async (req, res) => {
     </td>
 </tr>`);
       });
-  });
-});
-
-app.get("/get-book-row/:id", async (req, res) => {
-  const id = req.params.id;
-  await Book.findOne({ where: { id: id } }).then((book) => {
-    return res.send(`<tr>
-    <td>${book.name}</td>
-    <td>${book.author}</td>
-    <td>
-        <button class="btn btn-primary"
-            hx-get="/get-edit-form/${id}">
-            Edit Book
-        </button>
-    </td>
-    <td>
-        <button hx-delete="/delete/${id}"
-            class="btn btn-primary">
-            Delete
-        </button>
-    </td>
-</tr>`);
   });
 });
 
